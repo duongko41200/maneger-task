@@ -1,0 +1,155 @@
+{
+  "tasks": [
+    {
+      "id": "page",
+      "title": "Page",
+      "color": "#0ea5e9",
+      "tasks": [
+        {
+          "id": "task1",
+          "name": "nội dung đăng page",
+          "owner": "DP",
+          "priority": "High",
+          "status": "Not Started",
+          "startDate": "Mar 3",
+          "count": 1,
+          "subtasks": [],
+          "contentList": []
+        },
+        {
+          "id": "task2",
+          "name": "Set lịch đăng bài",
+          "owner": "NM",
+          "priority": "",
+          "status": "Not Started",
+          "startDate": "",
+          "count": 1,
+          "subtasks": [],
+          "contentList": [
+            {
+              "text": "• 1. có tính chia sẻ thông tin ( kiến thức, tip, ...)\n• 2. có tính chốt sale + kêu gọi hành động vào website",
+              "timestamp": "2025-03-04T10:30:00.000Z",
+              "author": "DP"
+            }
+          ]
+        },
+        {
+          "id": "task3",
+          "name": "Tìm hiểu về SEO Fanpage",
+          "owner": "",
+          "priority": "Low",
+          "status": "Not Started",
+          "startDate": "",
+          "subtasks": [],
+          "contentList": [],
+          "budget": "dsfsdf"
+        },
+        {
+          "id": "task5",
+          "name": "Chức năng App",
+          "owner": "DP",
+          "priority": "",
+          "status": "Not Started",
+          "startDate": "",
+          "count": 5,
+          "subtasks": [],
+          "contentList": []
+        }
+      ]
+    },
+    {
+      "id": "app-aptis",
+      "title": "App aptis",
+      "color": "#ec4899",
+      "tasks": [
+        {
+          "id": "task4",
+          "name": "Test app",
+          "owner": "",
+          "priority": "",
+          "status": "Not Started",
+          "startDate": "",
+          "count": 2,
+          "subtasks": [
+            {
+              "id": "subtask1",
+              "name": "Test APP 3/3/2025",
+              "priority": "Low",
+              "status": "Done",
+              "startDate": "Mar 8",
+              "endDate": "Mar 12",
+              "owner": "NM,DP",
+              "contentList": []
+            },
+            {
+              "id": "subtask2",
+              "name": "Test app",
+              "priority": "Medium",
+              "status": "open",
+              "startDate": "Mar 16",
+              "endDate": "Mar 16",
+              "owner": "NM"
+            },
+            {
+              "id": "3436bd7c-9c73-4569-af08-dfe45a343c4e",
+              "name": "sdfsdfsf",
+              "owner": "",
+              "priority": "",
+              "status": "",
+              "startDate": "",
+              "endDate": ""
+            },
+            {
+              "id": "66e22712-c457-4727-8aa9-609a15d2e816",
+              "name": "duongabc",
+              "owner": "",
+              "priority": "",
+              "status": "",
+              "startDate": "",
+              "endDate": ""
+            },
+            {
+              "id": "3fb0ae3b-6bbf-41d7-83d7-97dadbab91a5",
+              "name": "sdfsdfsdf",
+              "owner": "",
+              "priority": "",
+              "status": "",
+              "startDate": "",
+              "endDate": ""
+            }
+          ],
+          "contentList": []
+        }
+      ]
+    },
+    {
+      "id": "gx8bfn6ERXRbLJs-Z-u5g",
+      "title": "sdfsdf",
+      "color": "#f59e0b",
+      "tasks": [
+        {
+          "id": "r7G-NNc1ib28Qc7yJvAM4",
+          "name": "sdfsdf",
+          "owner": "",
+          "priority": "",
+          "status": "",
+          "startDate": "",
+          "endDate": "",
+          "notes": "",
+          "subtasks": [
+            {
+              "id": "f03d6e32-dbd7-4195-804e-513fc618c43a",
+              "name": "sdfsdfsdf",
+              "owner": "",
+              "priority": "",
+              "status": "",
+              "startDate": "",
+              "endDate": ""
+            }
+          ],
+          "contentList": []
+        }
+      ]
+    }
+  ]
+}
