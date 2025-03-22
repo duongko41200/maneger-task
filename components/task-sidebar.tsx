@@ -1,7 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { X, Paperclip, Edit, Trash, Check } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import {
+	X,
+	Paperclip,
+	Edit,
+	Trash,
+	Check,
+	Bold,
+	Italic,
+	Underline,
+	Link,
+	List,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
 	Tabs,
@@ -81,6 +92,7 @@ export default function TaskSidebar({
 		number | null
 	>(null);
 	const [editedContent, setEditedContent] = useState('');
+	const contentEditableRef = useRef<HTMLDivElement>(null);
 
 	// Add a function to handle editing content
 	const handleEditContent = (index: number) => {
@@ -208,51 +220,54 @@ export default function TaskSidebar({
 		});
 	};
 
-	// Update the handleSubmitContent function to include a timestamp with the content
-	const handleSubmitContent = () => {
-		if (task && content.trim()) {
-			// Format the content to include bullet points if it has multiple lines
-			let formattedContent = content;
-
-			// If content has multiple lines and doesn't already have bullet points,
-			// add bullet points to each line
-			if (content.includes('\n') && !content.includes('•')) {
-				formattedContent = content
-					.split('\n')
-					.map((line, index) =>
-						line.trim() ? `• ${line.trim()}` : line
-					)
-					.join('\n');
+	const handleFormatClick = (command: string, value?: string) => {
+		document.execCommand(command, false, value);
+		if (command === 'insertUnorderedList') {
+			// Ensure proper list formatting
+			const selection = window.getSelection();
+			if (selection && selection.rangeCount > 0) {
+				const range = selection.getRangeAt(0);
+				const list = range.commonAncestorContainer.parentElement;
+				if (list && list.tagName === 'ul') {
+					list.style.marginLeft = '20px';
+				}
 			}
+		}
+		contentEditableRef.current?.focus();
+	};
 
-			// Create a content entry with timestamp and formatted content
-			const timestamp = new Date().toISOString();
-			const contentEntry = {
-				text: formattedContent,
-				timestamp,
-				author: task.owner || 'DP',
-			};
+	const handleSubmitContent = () => {
+		if (!content.trim()) return;
 
-			// Dispatch the ADD_CONTENT action to update global state
-			dispatch({
-				type: 'ADD_CONTENT',
-				payload: {
-					groupId,
-					taskId: task.parentTaskId,
-					subtaskId: task.id,
-					content: contentEntry,
-				},
-			});
+		const newContent = {
+			id: nanoid(),
+			content: content,
+			createdAt: new Date().toISOString(),
+		};
 
-			console.log('groups abc', groups);
+		// Dispatch the ADD_CONTENT action to update global state
+		dispatch({
+			type: 'ADD_CONTENT',
+			payload: {
+				groupId,
+				taskId: task?.parentTaskId,
+				subtaskId: task?.id,
+				content: newContent,
+			},
+		});
 
-			// Clear the content input
-			setContent('');
+		console.log('groups abc', groups);
 
-			toast({
-				title: 'Content added',
-				description: 'Your content has been saved successfully.',
-			});
+		// Clear the content input
+		setContent('');
+
+		toast({
+			title: 'Content added',
+			description: 'Your content has been saved successfully.',
+		});
+
+		if (contentEditableRef.current) {
+			contentEditableRef.current.innerHTML = '';
 		}
 	};
 
@@ -405,17 +420,17 @@ export default function TaskSidebar({
 					className="flex-1 p-0 overflow-auto flex flex-col"
 				>
 					<div className="flex-1 overflow-auto max-h-[calc(100vh-350px)] overflow-y-auto">
-						{groups
-							?.find((group) => group.id === groupId)
-							?.tasks?.find((t) => t.id === task.parentTaskId)
-							?.subtasks?.find((subtask) => subtask.id === task.id)
-							?.contentList?.length > 0 ? (
-							<div className="p-4 space-y-6">
-								{groups
-									?.find((group) => group.id === groupId)
-									?.tasks?.find((t) => t.id === task.parentTaskId)
-									?.subtasks?.find((subtask) => subtask.id === task.id)
-									?.contentList.map((item: any, index: number) => (
+						{(() => {
+							const contentList = groups
+								?.find((group) => group.id === groupId)
+								?.tasks?.find((t) => t.id === task?.parentTaskId)
+								?.subtasks?.find(
+									(subtask) => subtask.id === task?.id
+								)?.contentList;
+
+							return contentList && contentList.length > 0 ? (
+								<div className="p-4 space-y-6">
+									{contentList.map((item: any, index: number) => (
 										<div key={index} className="relative group">
 											{editingContentIndex === index ? (
 												<>
@@ -449,7 +464,6 @@ export default function TaskSidebar({
 																		</div>
 																	</div>
 																</div>
-			
 															</div>
 														</div>
 													</TabsContent>
@@ -631,112 +645,113 @@ export default function TaskSidebar({
 											)}
 										</div>
 									))}
-							</div>
-						) : (
-							<div className="flex flex-col items-center justify-center flex-1 p-6 text-center">
-								<div className="flex flex-col items-center mb-4">
-									<div className="flex mb-4">
-										<div className="bg-blue-100 p-2 rounded-lg mr-2">
-											<div className="w-10 h-2 bg-blue-300 rounded mb-1"></div>
-											<div className="w-8 h-2 bg-blue-300 rounded"></div>
-										</div>
-										<div className="bg-blue-100 p-2 rounded-lg">
-											<div className="w-6 h-6 bg-blue-300 rounded-full flex items-center justify-center text-blue-500 text-xs">
-												😊
+								</div>
+							) : (
+								<div className="flex flex-col items-center justify-center flex-1 p-6 text-center">
+									<div className="flex flex-col items-center mb-4">
+										<div className="flex mb-4">
+											<div className="bg-blue-100 p-2 rounded-lg mr-2">
+												<div className="w-10 h-2 bg-blue-300 rounded mb-1"></div>
+												<div className="w-8 h-2 bg-blue-300 rounded"></div>
+											</div>
+											<div className="bg-blue-100 p-2 rounded-lg">
+												<div className="w-6 h-6 bg-blue-300 rounded-full flex items-center justify-center text-blue-500 text-xs">
+													😊
+												</div>
 											</div>
 										</div>
+										<h3 className="text-lg font-medium mb-2">
+											No updates yet
+										</h3>
+										<p className="text-gray-500 text-sm mb-4">
+											Share progress, mention a teammate,
+											<br />
+											or upload a file to get things moving
+										</p>
 									</div>
-									<h3 className="text-lg font-medium mb-2">
-										No updates yet
-									</h3>
-									<p className="text-gray-500 text-sm mb-4">
-										Share progress, mention a teammate,
-										<br />
-										or upload a file to get things moving
-									</p>
 								</div>
-							</div>
-						)}
+							);
+						})()}
 					</div>
 
 					<div className="border-t mt-auto">
 						<div className="p-4">
-							<textarea
-								className="w-full border rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-blue-500 resize-none"
-								placeholder="Write an update and mention others with @"
-								rows={3}
-								value={content}
-								onChange={(e) => setContent(e.target.value)}
-							></textarea>
-						</div>
-						<div className="flex items-center justify-between p-2 px-4 border-t bg-gray-50">
-							<div className="flex items-center gap-2">
-								<Button
-									variant="ghost"
-									size="sm"
-									className="text-gray-500"
-								>
-									<span className="flex items-center">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="16"
-											height="16"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											strokeWidth="2"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											className="mr-1"
+							<div className="flex flex-col space-y-4">
+								<div
+									ref={contentEditableRef}
+									contentEditable
+									className="min-h-[100px] p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400"
+									onInput={(e) => setContent(e.currentTarget.innerHTML)}
+									data-placeholder="Add a comment..."
+									onClick={(e) => {
+										const target = e.target as HTMLElement;
+										if (target.tagName === 'A') {
+											e.preventDefault();
+											const href = target.getAttribute('href');
+											if (href) {
+												window.open(href, '_blank');
+											}
+										}
+									}}
+								/>
+
+								<div className="flex justify-between">
+									<div className="flex items-center justify-between p-2 px-4 border-t bg-gray-50">
+										<div className="flex space-x-2 mb-2">
+											<button
+												onClick={() => handleFormatClick('bold')}
+												className="p-1 hover:bg-gray-100 rounded"
+												title="Bold"
+											>
+												<Bold size={16} />
+											</button>
+											<button
+												onClick={() => handleFormatClick('italic')}
+												className="p-1 hover:bg-gray-100 rounded"
+												title="Italic"
+											>
+												<Italic size={16} />
+											</button>
+											<button
+												onClick={() => handleFormatClick('underline')}
+												className="p-1 hover:bg-gray-100 rounded"
+												title="Underline"
+											>
+												<Underline size={16} />
+											</button>
+											<button
+												onClick={() => {
+													const url = prompt('Enter URL:');
+													if (url) handleFormatClick('createLink', url);
+												}}
+												className="p-1 hover:bg-gray-100 rounded"
+												title="Insert Link"
+											>
+												<Link size={16} />
+											</button>
+											<button
+												onClick={() =>
+													handleFormatClick('insertUnorderedList')
+												}
+												className="p-1 hover:bg-gray-100 rounded"
+												title="Bullet List"
+											>
+												<List size={16} />
+											</button>
+										</div>
+									</div>
+
+									<div>
+										<Button
+											size="sm"
+											onClick={handleSubmitContent}
+											disabled={!content.trim()}
 										>
-											<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-											<circle cx="12" cy="7" r="4"></circle>
-										</svg>
-										Mention
-									</span>
-								</Button>
-								<Button
-									variant="ghost"
-									size="sm"
-									className="text-gray-500"
-								>
-									GIF
-								</Button>
-								<Button
-									variant="ghost"
-									size="sm"
-									className="text-gray-500"
-								>
-									<span className="flex items-center">
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="16"
-											height="16"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											strokeWidth="2"
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											className="mr-1"
-										>
-											<path d="M4 11v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8"></path>
-											<path d="M4 11V7a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v4"></path>
-											<path d="M9.5 15v-4.5"></path>
-											<path d="M14.5 15v-4.5"></path>
-											<path d="M10 7 8 4H4"></path>
-											<path d="m14 7 2-3h4"></path>
-										</svg>
-									</span>
-								</Button>
+											Send
+										</Button>
+									</div>
+								</div>
 							</div>
-							<Button
-								size="sm"
-								onClick={handleSubmitContent}
-								disabled={!content.trim()}
-							>
-								Send
-							</Button>
 						</div>
 					</div>
 				</TabsContent>
@@ -757,6 +772,7 @@ export default function TaskSidebar({
 					</div>
 				</TabsContent>
 			</Tabs>
+
 		</div>
 	);
 }
