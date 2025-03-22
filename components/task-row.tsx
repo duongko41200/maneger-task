@@ -58,7 +58,7 @@ export default function TaskRow({ task, expanded, onToggle, borderColor, onDragS
   return (
     <div
       className={cn(
-        "grid grid-cols-12 border-b hover:bg-gray-50 group",
+        "grid grid-cols-12 border-b hover:bg-gray-50 group border-dashed border-2",
         task.subtasks && task.subtasks.length > 0 ? "cursor-pointer" : "",
         isDragging && "opacity-50 bg-gray-100",
         expanded && "bg-gray-50",
@@ -97,7 +97,7 @@ export default function TaskRow({ task, expanded, onToggle, borderColor, onDragS
 
         <span className="text-sm">{task.name}</span>
 
-        {task.count && <span className="ml-2 text-xs bg-gray-200 px-1.5 py-0.5 rounded-full">{task.count}</span>}
+        { <span className="ml-2 text-xs bg-gray-200 px-1.5 py-0.5 rounded-full">1</span>}
       </div>
 
       <div className="col-span-1 p-2">
@@ -156,14 +156,7 @@ export default function TaskRow({ task, expanded, onToggle, borderColor, onDragS
         )}
       </div>
 
-      <div className="col-span-1 p-2">
-        {task.files && (
-          <div className="text-xs">
-            {task.files}
-            <div className="text-gray-400">files</div>
-          </div>
-        )}
-      </div>
+
 
       <div className="col-span-1 p-2">
         {task.timeline && (
