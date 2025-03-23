@@ -28,7 +28,11 @@ interface TaskGroupProps {
 		sourceGroupId?: string
 	) => void;
 	onDragOver: (e: React.DragEvent) => void;
-	onDrop: (e: React.DragEvent, targetGroupId: string) => void;
+	onDrop: (
+		e: React.DragEvent,
+		targetGroupId: string,
+		targetIndex: number
+	) => void;
 	index: number;
 	renderTaskRow: (
 		task: Task,
@@ -108,7 +112,7 @@ export default function TaskGroup({
 		e.preventDefault();
 		e.stopPropagation();
 		setIsDraggingOver(false);
-		onDrop(e, id);
+		onDrop(e, id, index);
 	};
 
 	const handleEditClick = (e: React.MouseEvent) => {
@@ -186,7 +190,7 @@ export default function TaskGroup({
 						/>
 					) : (
 						<span
-							className="text-sm font-medium"
+							className="text-lg font-medium"
 							style={{ color: color }}
 						>
 							{title}
@@ -268,8 +272,8 @@ export default function TaskGroup({
 					<div
 						className={cn('task-list', isDraggingOver && 'drag-over')}
 					>
-						{tasks.map((task) => (
-							<div key={task.id}>
+						{tasks.map((task, idx) => (
+							<div key={idx}>
 								{renderTaskRow(task, !!expandedTasks[task.id], () =>
 									toggleTask(task.id)
 								)}

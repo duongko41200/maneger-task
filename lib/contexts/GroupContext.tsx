@@ -16,6 +16,10 @@ type ActionType =
 	| { type: 'SET_GROUPS'; payload: Group[] }
 	| { type: 'ADD_GROUP'; payload: Group }
 	| {
+			type: 'REORDER_GROUPS';
+			payload: { sourceIndex: number; targetIndex: number };
+	  }
+	| {
 			type: 'UPDATE_GROUP';
 			payload: { groupId: string; updates: Partial<Group> };
 	  }
@@ -117,6 +121,14 @@ function groupReducer(state: Group[], action: ActionType): Group[] {
 
 		case 'ADD_GROUP':
 			return [...state, action.payload];
+
+		case 'REORDER_GROUPS': {
+			const { sourceIndex, targetIndex } = action.payload;
+			const newGroups = [...state];
+			const [movedGroup] = newGroups.splice(sourceIndex, 1);
+			newGroups.splice(targetIndex, 0, movedGroup);
+			return newGroups;
+		}
 
 		case 'UPDATE_GROUP':
 			return state.map((group) =>

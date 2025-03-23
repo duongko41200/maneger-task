@@ -275,17 +275,30 @@ export default function TaskSidebar({
 
 	// Add this function to format the date
 	const formatDate = (timestamp: string) => {
+		// Check if timestamp is valid
+		if (!timestamp || isNaN(new Date(timestamp).getTime())) {
+			return format(new Date(), 'dd/mm/yyyy h:mm a');
+		}
+
 		const date = new Date(timestamp);
 
-		if (isToday(date)) {
-			return `Today at ${format(date, 'h:mm a')}`;
-		} else if (isYesterday(date)) {
-			return `Yesterday at ${format(date, 'h:mm a')}`;
-		} else if (Date.now() - date.getTime() < 7 * 24 * 60 * 60 * 1000) {
-			// Less than a week ago
-			return formatDistanceToNow(date, { addSuffix: true });
-		} else {
-			return format(date, 'MMM d, yyyy');
+		try {
+			if (isToday(date)) {
+				return `Today at ${format(date, 'h:mm a')}`;
+			} else if (isYesterday(date)) {
+				return `Yesterday at ${format(date, 'h:mm a')}`;
+			} else if (
+				Date.now() - date.getTime() <
+				7 * 24 * 60 * 60 * 1000
+			) {
+				// Less than a week ago
+				return formatDistanceToNow(date, { addSuffix: true });
+			} else {
+				return format(date, 'MMM d, yyyy');
+			}
+		} catch (error) {
+			console.error('Error formatting date:', error);
+			return 'Invalid date';
 		}
 	};
 
@@ -548,8 +561,8 @@ export default function TaskSidebar({
 																</div>
 															</div>
 															<div className="mt-2 whitespace-pre-wrap">
-																{item.text.includes('\n') ||
-																item.text.includes('•') ? (
+																{item.text && (item.text.includes('\n') ||
+																item.text.includes('•') )? (
 																	<div className="pl-5">
 																		{item.text
 																			.split('\n')
@@ -772,7 +785,6 @@ export default function TaskSidebar({
 					</div>
 				</TabsContent>
 			</Tabs>
-
 		</div>
 	);
 }

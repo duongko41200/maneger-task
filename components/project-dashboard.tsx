@@ -310,12 +310,11 @@ export default function ProjectDashboard() {
 			parentTaskId: parentTask.id,
 		};
 
-
 		const filterSubtask = groups
 			.find((group) => group.id === id)
 			?.tasks.find((task) => task.id === parentTask.id)
 			?.subtasks?.find((subtask) => subtask.id === subtaskAsTask.id);
-		
+
 		console.log('filterSubtask', filterSubtask);
 
 		setCurrentGroupId(id);
@@ -352,7 +351,6 @@ export default function ProjectDashboard() {
 		sourceGroupId?: string
 	) => {
 		dragItem.current = { type, id, sourceGroupId };
-
 		e.dataTransfer.setData(
 			'text/plain',
 			JSON.stringify({ type, id, sourceGroupId })
@@ -376,6 +374,24 @@ export default function ProjectDashboard() {
 					document.body.removeChild(ghostElement);
 				}, 0);
 			}
+		} else if (type === 'group') {
+			const groupElement = document.querySelector(
+				`[data-group-id="${id}"]`
+			);
+			if (groupElement) {
+				const rect = groupElement.getBoundingClientRect();
+				const ghostElement = document.createElement('div');
+				ghostElement.style.width = `${rect.width}px`;
+				ghostElement.style.height = `${rect.height}px`;
+				ghostElement.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+				ghostElement.style.position = 'absolute';
+				ghostElement.style.top = '-1000px';
+				document.body.appendChild(ghostElement);
+				e.dataTransfer.setDragImage(ghostElement, 0, 0);
+				setTimeout(() => {
+					document.body.removeChild(ghostElement);
+				}, 0);
+			}
 		}
 	};
 
@@ -386,7 +402,8 @@ export default function ProjectDashboard() {
 
 	const handleDrop = async (
 		e: React.DragEvent,
-		targetGroupId: string
+		targetGroupId: string,
+		targetIndex: number
 	) => {
 		e.preventDefault();
 		e.stopPropagation();
@@ -434,6 +451,31 @@ export default function ProjectDashboard() {
 							variant: 'destructive',
 						});
 					}
+				}
+			}
+		} else if (type === 'group') {
+			const sourceIndex = groups.findIndex((group) => group.id === id);
+			if (sourceIndex !== -1 && sourceIndex !== targetIndex) {
+				try {
+					dispatch({
+						type: 'REORDER_GROUPS',
+						payload: {
+							sourceIndex,
+							targetIndex,
+						},
+					});
+
+					toast({
+						title: 'Group reordered',
+						description: 'Group has been reordered successfully.',
+					});
+				} catch (error) {
+					console.error('Error reordering group:', error);
+					toast({
+						title: 'Error',
+						description: 'Failed to reorder group. Please try again.',
+						variant: 'destructive',
+					});
 				}
 			}
 		}
