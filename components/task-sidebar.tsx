@@ -240,10 +240,23 @@ export default function TaskSidebar({
 		if (!content.trim()) return;
 		const author = localStorage.getItem('member_aptis_name');
 		console.log('author', author);
+		let formattedContent = content;
 
+		// If content has multiple lines and doesn't already have bullet points,
+		// add bullet points to each line
+		if (content.includes('\n') && !content.includes('•')) {
+			formattedContent = content
+				.split('\n')
+				.map((line, index) =>
+					line.trim() ? `• ${line.trim()}` : line
+				)
+				.join('\n');
+		}
+
+		// Create a content entry with timestamp and formatted content
 		const newContent = {
 			id: nanoid(),
-			text: content,
+			text: formattedContent,
 			timestamp: new Date().toISOString(),
 			author: author || 'DP',
 		};
@@ -665,7 +678,10 @@ export default function TaskSidebar({
 																			))}
 																	</div>
 																) : (
-																	<p>{item.text}</p>
+																    <p
+      className="mb-1"
+      dangerouslySetInnerHTML={{ __html: item.text }}
+    />
 																)}
 															</div>
 														</div>

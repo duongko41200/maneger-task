@@ -318,11 +318,12 @@ li {
 	margin-bottom: 10px; /* Add space between items */
 	padding-left: 20px; /* Indent list items */
 	position: relative;
+	margin-left:10px
 }
 li::before {
 	content: '•'; /* Custom bullet symbol */
-	position: absolute; /* Position it inside the list item */
 	left: 0; /* Align the bullet to the left */
 	top: 0; /* Align the bullet with the text */
 	color: #007bff; /* Set color of the bullet */
+	margin-right:10px
 }
