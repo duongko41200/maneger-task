@@ -124,9 +124,14 @@ function groupReducer(state: Group[], action: ActionType): Group[] {
 
 		case 'REORDER_GROUPS': {
 			const { sourceIndex, targetIndex } = action.payload;
+
 			const newGroups = [...state];
+
+			newGroups[sourceIndex].position = targetIndex;
+			newGroups[targetIndex].position = sourceIndex;
 			const [movedGroup] = newGroups.splice(sourceIndex, 1);
 			newGroups.splice(targetIndex, 0, movedGroup);
+
 			return newGroups;
 		}
 
@@ -189,7 +194,7 @@ function groupReducer(state: Group[], action: ActionType): Group[] {
 			console.log('action.payload.content', action.payload);
 			return state.map((group) => {
 				if (group.id === action.payload.groupId) {
-					return {
+					const test =  {
 						...group,
 						tasks: group.tasks.map((task) => {
 							if (task.id === action.payload.taskId) {
@@ -212,6 +217,8 @@ function groupReducer(state: Group[], action: ActionType): Group[] {
 							return task;
 						}),
 					};
+					console.log('test abc 13 :: ', test);
+					return test;
 				}
 				return group;
 			});

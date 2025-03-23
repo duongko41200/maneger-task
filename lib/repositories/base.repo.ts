@@ -6,13 +6,13 @@ import {
 	IContent,
 } from '../models/group.model';
 import { v4 as uuidv4 } from 'uuid';
-
 export class BaseRepository {
 	// Get all groups
 	async getGroups(): Promise<IGroup[]> {
-		return await Group.find();
+		const group = await Group.find().sort({ position: 1 });
+		console.log('group abc ', group);
+		return group;
 	}
-
 	// Add a new group
 	async addGroup(group: Omit<IGroup, 'id'>): Promise<string> {
 		const newGroup = new Group({
@@ -167,7 +167,7 @@ export class BaseRepository {
 			throw new Error('Source or target group not found');
 		}
 
-		const task = sourceGroup.tasks.find((t:any) => t.id === taskId);
+		const task = sourceGroup.tasks.find((t: any) => t.id === taskId);
 		if (!task) {
 			throw new Error('Task not found in source group');
 		}

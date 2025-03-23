@@ -37,6 +37,7 @@ export interface IGroup extends Document {
 	title: string;
 	color: string;
 	tasks: ITask[];
+	position: number;
 }
 
 const ContentSchema = new Schema<IContent>({
@@ -76,6 +77,7 @@ const GroupSchema = new Schema<IGroup>({
 	title: { type: String, required: true },
 	color: { type: String, required: true },
 	tasks: [TaskSchema],
+	position: { type: Number, required: true, default: 0 },
 });
 
 export const Group =

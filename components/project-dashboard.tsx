@@ -54,6 +54,7 @@ export default function ProjectDashboard() {
 			title: name,
 			color: getRandomColor(),
 			tasks: [],
+			position: groups.length,
 		};
 
 		try {

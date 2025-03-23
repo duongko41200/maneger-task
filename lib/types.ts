@@ -43,4 +43,5 @@ export interface Group {
 	title: string;
 	color: string;
 	tasks: Task[];
+	position: number;
 }

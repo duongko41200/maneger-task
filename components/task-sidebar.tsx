@@ -241,8 +241,9 @@ export default function TaskSidebar({
 
 		const newContent = {
 			id: nanoid(),
-			content: content,
-			createdAt: new Date().toISOString(),
+			text: content,
+			timestamp: new Date().toISOString(),
+			author: task?.owner || 'DP',
 		};
 
 		// Dispatch the ADD_CONTENT action to update global state
@@ -491,22 +492,82 @@ export default function TaskSidebar({
 															}
 														></textarea>
 														<div className="flex justify-end space-x-2">
-															<Button
-																size="sm"
-																variant="outline"
-																onClick={() =>
-																	setEditingContentIndex(null)
-																}
-															>
-																Cancel
-															</Button>
-															<Button
-																size="sm"
-																onClick={handleSaveEditedContent}
-															>
-																<Check className="h-4 w-4 mr-1" />
-																Save Changes
-															</Button>
+															<div className="flex items-center justify-between p-2 px-4 border-t bg-gray-50">
+																{/* //skjfksdjfjdslk */}
+																<div className="flex space-x-2 mb-2">
+																	<button
+																		onClick={() =>
+																			handleFormatClick('bold')
+																		}
+																		className="p-1 hover:bg-gray-100 rounded"
+																		title="Bold"
+																	>
+																		<Bold size={16} />
+																	</button>
+																	<button
+																		onClick={() =>
+																			handleFormatClick('italic')
+																		}
+																		className="p-1 hover:bg-gray-100 rounded"
+																		title="Italic"
+																	>
+																		<Italic size={16} />
+																	</button>
+																	<button
+																		onClick={() =>
+																			handleFormatClick('underline')
+																		}
+																		className="p-1 hover:bg-gray-100 rounded"
+																		title="Underline"
+																	>
+																		<Underline size={16} />
+																	</button>
+																	<button
+																		onClick={() => {
+																			const url = prompt('Enter URL:');
+																			if (url)
+																				handleFormatClick(
+																					'createLink',
+																					url
+																				);
+																		}}
+																		className="p-1 hover:bg-gray-100 rounded"
+																		title="Insert Link"
+																	>
+																		<Link size={16} />
+																	</button>
+																	<button
+																		onClick={() =>
+																			handleFormatClick(
+																				'insertUnorderedList'
+																			)
+																		}
+																		className="p-1 hover:bg-gray-100 rounded"
+																		title="Bullet List"
+																	>
+																		<List size={16} />
+																	</button>
+																</div>
+															</div>
+
+															<div>
+																<Button
+																	size="sm"
+																	variant="outline"
+																	onClick={() =>
+																		setEditingContentIndex(null)
+																	}
+																>
+																	Cancel
+																</Button>
+																<Button
+																	size="sm"
+																	onClick={handleSaveEditedContent}
+																>
+																	<Check className="h-4 w-4 mr-1" />
+																	Save Changes
+																</Button>
+															</div>
 														</div>
 													</div>
 												</>
@@ -561,8 +622,9 @@ export default function TaskSidebar({
 																</div>
 															</div>
 															<div className="mt-2 whitespace-pre-wrap">
-																{item.text && (item.text.includes('\n') ||
-																item.text.includes('•') )? (
+																{item.text &&
+																(item.text.includes('\n') ||
+																	item.text.includes('•')) ? (
 																	<div className="pl-5">
 																		{item.text
 																			.split('\n')
@@ -652,7 +714,7 @@ export default function TaskSidebar({
 														</Button>
 													</div>
 													{index <
-														curentContentList.contentList.length -
+														curentContentList?.contentList?.length -
 															1 && <hr className="my-4" />}
 												</div>
 											)}

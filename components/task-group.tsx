@@ -94,7 +94,6 @@ export default function TaskGroup({
 			[taskId]: !prev[taskId],
 		}));
 	};
-	console.log('tasks', tasks);
 	const handleDragOver = (e: React.DragEvent) => {
 		e.preventDefault();
 		e.stopPropagation();

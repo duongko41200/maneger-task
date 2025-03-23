@@ -49,10 +49,25 @@ export async function POST(request: Request) {
 		await connectDB();
 		const groups: Group[] = await request.json();
 
+		// Delete groups that no longer exist
+		const existingGroupIds = (await GroupModel.find({})).map(
+			(g) => g.id
+		);
+		const newGroupIds = groups.map((g) => g.id);
+		const groupsToDelete = existingGroupIds.filter(
+			(id) => !newGroupIds.includes(id)
+		);
+
+		if (groupsToDelete.length > 0) {
+			await GroupModel.deleteMany({ id: { $in: groupsToDelete } });
+		}
+
 		console.log('groups', groups);
 
-		// Update or create groups in MongoDB
-		for (const group of groups) {
+		// Update or create groups in MongoDB with positions
+		for (let i = 0; i < groups.length; i++) {
+			const group = groups[i];
+
 			const existingGroup = await GroupModel.findOne({ id: group.id });
 
 			if (existingGroup) {
@@ -61,16 +76,22 @@ export async function POST(request: Request) {
 					title: group.title,
 					color: group.color,
 					tasks: group.tasks.map(transformTask),
+					position: group.position, // Update position based on array index
 				});
 			} else {
+				console.log('group 123123', group);
 				// Create new group
-				const newGroup = new GroupModel({
+				const newGroup = {
 					id: group.id,
 					title: group.title,
 					color: group.color,
 					tasks: group.tasks.map(transformTask),
-				});
-				await newGroup.save();
+					position: group.position, // Set position based on array index
+				};
+
+				console.log('newGroup', newGroup);
+				const createdGroup = await GroupModel.create(newGroup);
+				console.log('createdGroup', createdGroup);
 			}
 		}
 
