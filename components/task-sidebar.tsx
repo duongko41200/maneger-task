@@ -238,12 +238,14 @@ export default function TaskSidebar({
 
 	const handleSubmitContent = () => {
 		if (!content.trim()) return;
+		const author = localStorage.getItem('member_aptis_name');
+		console.log('author', author);
 
 		const newContent = {
 			id: nanoid(),
 			text: content,
 			timestamp: new Date().toISOString(),
-			author: task?.owner || 'DP',
+			author: author || 'DP',
 		};
 
 		// Dispatch the ADD_CONTENT action to update global state

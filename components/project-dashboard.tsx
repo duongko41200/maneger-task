@@ -10,6 +10,7 @@ import TaskGroup from './task-group';
 import AddGroupModal from './add-group-modal';
 import AddTaskModal from './add-task-modal';
 import TaskSidebar from './task-sidebar';
+import UserSelectionModal from './user-selection-modal';
 import type { Task, Group, Subtask } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
@@ -41,6 +42,23 @@ export default function ProjectDashboard() {
 	const [curentContentList, setCurentContentList] = useState<any>([]);
 	const [isAddSubtaskModalOpen, setIsAddSubtaskModalOpen] =
 		useState(false);
+	const [isUserSelectionModalOpen, setIsUserSelectionModalOpen] =
+		useState(false);
+	const [currentUser, setCurrentUser] = useState<string>('');
+
+	// Check for user on mount
+	useEffect(() => {
+		const savedUser = localStorage.getItem('member_aptis_name');
+		if (!savedUser) {
+			setIsUserSelectionModalOpen(true);
+		} else {
+			setCurrentUser(savedUser);
+		}
+	}, []);
+
+	const handleUserSelect = (userId: string) => {
+		setCurrentUser(userId);
+	};
 
 	// Drag and drop state
 	const dragItem = useRef<{
@@ -669,6 +687,12 @@ export default function ProjectDashboard() {
 				parentTaskId={currentTaskId}
 				onClose={() => setIsAddSubtaskModalOpen(false)}
 				onAddSubtask={handleAddSubtask}
+			/>
+
+			<UserSelectionModal
+				isOpen={isUserSelectionModalOpen}
+				onClose={() => setIsUserSelectionModalOpen(false)}
+				onSave={handleUserSelect}
 			/>
 
 			{isTaskSidebarOpen && currentTask && (
